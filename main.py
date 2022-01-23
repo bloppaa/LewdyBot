@@ -2,9 +2,10 @@ import discord
 import os
 
 import hentai as h
+import embeds as e
 from keep_alive import keep_alive
 
-client = discord.Client()
+client = discord.Client(activity=discord.Game('$help'))
 
 
 @client.event
@@ -31,7 +32,8 @@ async def on_message(message):
         action = words[0]
 
         if action == 'help':
-            pass
+            embed_msg = e.get_help_embed()
+            await message.channel.send(embed=embed_msg)
         
         elif action == 'r34':
             tag = None
