@@ -22,11 +22,29 @@ async def on_message(message):
     if isinstance(message.channel, discord.DMChannel):
         return
 
-    msg = message.content
+    msg = message.content.lower()
 
-    if msg.lower() == '$r34':
-        url = h.get_random_r34_media()
-        await message.channel.send(url)
+    # Verifica que el mensaje empiece con el prefijo '$' para realizar las acciones del bot.
+    if msg.startswith('$'):
+        msg = msg[1:]
+        words = msg.split()
+        action = words[0]
+
+        if action == 'help':
+            pass
+        
+        elif action == 'r34':
+            tag = None
+            try:
+                tag = words[1]
+            except IndexError:
+                pass
+            finally:
+                file_url = h.get_random_r34(tag)
+                await message.channel.send(file_url)
+
+        elif action == 'safe':
+            pass
 
 
 keep_alive()
