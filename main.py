@@ -1,7 +1,7 @@
 import discord
 import os
 
-import gelbooru as gb
+import hentai as h
 
 client = discord.Client()
 
@@ -16,9 +16,11 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content == '$r34':
-        media = gb.get_random_r34_media()
-        await message.channel.send(media)
+    msg = message.content
+
+    if msg.lower() == '$r34':
+        url = h.get_random_r34_media()
+        await message.channel.send(url)
 
 
 client.run(os.environ['LEWDY_TOKEN'])
