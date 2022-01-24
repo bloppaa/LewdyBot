@@ -21,6 +21,15 @@ def get_random_file_url(tag=None, nsfw=True):
 
     response = requests.get(url)
     json_data = json.loads(response.text)
-    file_url = json_data['file_url']
-
-    return file_url
+    
+    success = json_data.get('success')
+    if success == False:
+        messages = {
+            'You cannot search for more than 2 tags at a time.': 'No puedes buscar mas de 2 tags al mismo tiempo.',
+            'That record was not found.': 'No se encontró ese tag, ¿quizá lo escribiste mal?',
+        }
+        message = json_data['message']
+        return messages[message]
+    else:
+        file_url = json_data['file_url']
+        return file_url

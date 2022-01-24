@@ -21,11 +21,7 @@ def get_media(words, nsfw=True):
     except IndexError:
         pass
             
-    try:
-        file_url = d.get_random_file_url(tag, nsfw)
-    except KeyError:
-        file_url = 'No pude encontrar lo que buscas, ¿quizá escribiste algo mal?'
-    
+    file_url = d.get_random_file_url(tag, nsfw)
     return file_url
 
 
