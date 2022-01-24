@@ -1,28 +1,11 @@
 import discord
 import os
 
-import danbooru as d
+import board as b
 import embed as e
 from keep_alive import keep_alive
 
 client = discord.Client(activity=discord.Game('$help'))
-
-
-def get_media(words, nsfw=True):
-    """
-    Busca un tag en el mensaje que se envió hacia el bot. Retorna la URL del archivo que contiene
-    ese tag, si es que lo encuentra, sino retorna un archivo aleatorio. El archivo puede ser o no
-    ser NSFW, dependiendo del segundo parámetro.
-    En caso de que el tag o el archivo no exista, retorna un mensaje informando esto.
-    """
-    tag = None
-    try:
-        tag = words[1]
-    except IndexError:
-        pass
-            
-    file_url = d.get_random_file_url(tag, nsfw)
-    return file_url
 
 
 @client.event
@@ -48,15 +31,35 @@ async def on_message(message):
         words = msg.split(maxsplit=1)
         action = words[0]
 
-        if action == 'help':
+        if action == 'help' or action == 'h':
             embed_msg = e.get_help_embed()
             await message.channel.send(embed=embed_msg)
         
-        elif action == 'r34':
-            await message.channel.send(get_media(words))
+        elif action == 'danbooru' or action == 'db':
+            tag = None
+            try:
+                tag = words[1]
+            except IndexError:
+                pass
 
-        elif action == 'safe':
-            await message.channel.send(get_media(words, False))
+            image = b.get_random_image_danbooru(tag)
+            if isinstance(image, discord.Embed):
+                await message.channel.send(embed=image)
+            else:
+                await message.channel.send(image)
+
+        elif action == 'safe' or action == 's':
+            tag = None
+            try:
+                tag = words[1]
+            except IndexError:
+                pass
+
+            image = b.get_random_image_danbooru(tag, False)
+            if isinstance(image, discord.Embed):
+                await message.channel.send(embed=image)
+            else:
+                await message.channel.send(image)
 
 
 keep_alive()
