@@ -9,6 +9,8 @@ def get_random_r34(tag=None):
     """
     url = f'https://danbooru.donmai.us/posts/random.json?tags=-rating:safe'
     if tag:
+        words = tag.split()
+        tag = '_'.join(words)
         url += f'+{tag}'
     response = requests.get(url)
     json_data = json.loads(response.text)

@@ -1,7 +1,7 @@
 import discord
 import os
 
-import hentai as h
+import danbooru as d
 import embeds as e
 from keep_alive import keep_alive
 
@@ -26,9 +26,9 @@ async def on_message(message):
     msg = message.content.lower()
 
     # Verifica que el mensaje empiece con el prefijo '$' para realizar las acciones del bot.
-    if msg.startswith('$'):
+    if msg.startswith('$r34'):
         msg = msg[1:]
-        words = msg.split()
+        words = msg.split(maxsplit=1)
         action = words[0]
 
         if action == 'help':
@@ -42,11 +42,14 @@ async def on_message(message):
             except IndexError:
                 pass
             finally:
-                file_url = h.get_random_r34(tag)
+                file_url = d.get_random_r34(tag)
                 await message.channel.send(file_url)
 
         elif action == 'safe':
             pass
+
+    elif msg.startswith('$safe'):
+        pass
 
 
 keep_alive()
