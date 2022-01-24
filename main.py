@@ -26,7 +26,7 @@ async def on_message(message):
     msg = message.content.lower()
 
     # Verifica que el mensaje empiece con el prefijo '$' para realizar las acciones del bot.
-    if msg.startswith('$r34'):
+    if msg.startswith('$'):
         msg = msg[1:]
         words = msg.split(maxsplit=1)
         action = words[0]
