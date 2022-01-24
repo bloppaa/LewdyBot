@@ -8,6 +8,10 @@ def get_help_embed():
     """
     help_embed = discord.Embed(
         title='Lista de comandos',
-        description='`$r34 <tag>` Muestra un archivo hentai aleatorio que contenga el tag. Si se omite el tag muestra un archivo cualquiera'
+        colour=0xab77a3,
+        description=(
+            '`$r34 <tag>` Muestra una imagen hentai aleatoria que contenga el tag.\n'
+            '`$safe <tag>` Muestra una imagen SFW aleatoria que contenga el tag.'
+            ),
     )
     return help_embed
