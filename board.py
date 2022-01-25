@@ -42,21 +42,29 @@ def get_random_image_danbooru(tag=None, nsfw=True):
     # Verifica que el archivo sea una imagen para retornar un embed.
     # Sino sólo regresa la URL del video.
     else:
-        # Si la imagen se eliminó, se recurre a la recursión.
+        # Si la imagen se eliminó, se muestra un mensaje.
         is_deleted = json_data['is_deleted']
         if is_deleted:
-            get_random_image_danbooru(tag, nsfw)
+            return 'Algo salió mal. Intenta de nuevo.'
 
         characters = format_characters(json_data['tag_string_character'])
         extension = json_data['file_ext']
         if extension == 'zip':
-            message = f"{json_data['large_file_url']}"
+            try:
+                message = f"{json_data['large_file_url']}"
+            except KeyError:
+                return 'Algo salió mal. Intenta de nuevo.'
+
             if characters:
                 message += f'\n_**{characters}**_'
             return message
 
         if extension == 'mp4' or extension == 'webm':
-            message = f"{json_data.get('file_url', json_data['large_file_url'])}"
+            try:
+                message = f"{json_data.get('file_url', json_data['large_file_url'])}"
+            except KeyError:
+                'Algo salió mal. Intenta de nuevo.'
+                
             if characters:
                 message += f'\n_**{characters}**_'
             return message
