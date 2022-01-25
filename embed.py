@@ -9,8 +9,8 @@ def get_help_embed():
         title='Lista de comandos',
         colour=0xab77a3,
         description=(
-            '`$danbooru <tag>` / `$db <tag>`\nMuestra una imagen NSFW de Danbooru.\n'
-            '\n`$safe <tag>` / `$s <tag>`\nMuestra una imagen SFW de Danbooru.'
+            '`$danbooru <tag>` / `$db <tag>`\nMuestra una imagen o video NSFW de Danbooru.\n'
+            '\n`$safe <tag>` / `$s <tag>`\nMuestra una imagen o video SFW de Danbooru.'
             ),
     )
     return help_embed
