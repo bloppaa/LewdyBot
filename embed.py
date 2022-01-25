@@ -16,25 +16,12 @@ def get_help_embed():
     return help_embed
 
 
-def format_characters(characters):
-    """
-    Le da formato al string obtenido de la API de Danbooru que contiene a los personajes de la imagen.
-    Formato: 'name_1 name_2' -> 'Name 1, Name 2'.
-    """
-    characters = characters.split()
-    for i in range(len(characters)):
-        characters[i] = ' '.join(characters[i].split('_'))
-
-    characters_string = ', '.join(characters).title()
-    return characters_string
-
-
-def get_danbooru_embed(file_url, characters):
+def get_image_characters_embed(file_url, characters):
     """
     Retorna un embed con la imagen y el/los personajes que aparecen en ella.
     """
     db_embed = discord.Embed(colour=0xcd7f32)
     db_embed.set_image(url=file_url)
-    db_embed.set_footer(text=format_characters(characters))
+    db_embed.set_footer(text=characters)
     
     return db_embed
