@@ -4,93 +4,35 @@ import json
 import embed as e
 
 
-def get_random_image_danbooru(tag=None, nsfw=True):
+def get_random_danbooru_file():
     """
-    Retorna un archivo aleatorio obtenido de Danbooru con los personajes
-    que se encuentran en él. Si se omite el tag, busca un archivo cualquiera.
-    Por defecto busca archivos NSFW, pero también puede buscar imágenes safe.
-    Si el archivo es una imagen, retorna un embed, sino sólo retorna un string.
+    Retorna la URL de un archivo aleatorio del board Danbooru.
     """
-    url = f'https://danbooru.donmai.us/posts/random.json?tags='
-    if nsfw:
-        url += f'+-rating:safe'
-    else:
-        url += f'+rating:safe'
-
-    # Transforma el tag en el formato requerido por la API.
-    if tag:
-        tags = tag.split('+')
-        for i in range(len(tags)):
-            tags[i] = join_tag(tags[i])
-        tag = '+'.join(tags)
-        url += f'+{tag}'
-
+    url = 'https://danbooru.donmai.us/posts/random.json?tags=-rating:safe'
     response = requests.get(url)
     json_data = json.loads(response.text)
 
-    # Obtiene el estado de la petición. 
-    # Si fracasa, retorna un mensaje especificando el error.
-    success = json_data.get('success')
-    if success == False:
-        messages = {
-            'You cannot search for more than 2 tags at a time.':
-            'No puedes buscar mas de 2 tags al mismo tiempo.',
-            'That record was not found.': 'No se encontró ningún registro.',
-        }
-        message = json_data['message']
-        return messages.get(message, 'Error.')
-    # Verifica que el archivo sea una imagen para retornar un embed.
-    # Sino sólo regresa la URL del video.
+    # Si no se puede obtener el id del archivo, significa que no es visible.
+    # En este caso, recurriremos a la recursion.
+    file_id = json_data.get('id')
+
+    if not file_id:
+        return get_random_danbooru_file()
     else:
-        # Si la imagen se eliminó, se muestra un mensaje.
-        is_deleted = json_data['is_deleted']
-        if is_deleted:
-            return 'Algo salió mal. Intenta de nuevo.'
+        # Si la extension del archivo es zip, la llave sera 'large_file_url',
+        # ya que la extension de esa URL es webm.
+        file_extension = json_data['file_ext']
+        key = 'large_file_url' if file_extension == 'zip' else 'file_url'
+        file_url = json_data[key]
 
-        characters = format_characters(json_data['tag_string_character'])
-        extension = json_data['file_ext']
-        if extension == 'zip':
-            try:
-                message = f"{json_data['large_file_url']}"
-            except KeyError:
-                return 'Algo salió mal. Intenta de nuevo.'
-
-            if characters:
-                message += f'\n_**{characters}**_'
-            return message
-
-        if extension == 'mp4' or extension == 'webm':
-            try:
-                message = f"{json_data.get('file_url', json_data['large_file_url'])}"
-            except KeyError:
-                'Algo salió mal. Intenta de nuevo.'
-                
-            if characters:
-                message += f'\n_**{characters}**_'
-            return message
-
-        else:
-            try:
-                file_url = json_data.get('file_url', json_data['large_file_url'])
-            except KeyError:
-                return 'Algo salió mal. Intenta otra cosa.'
-            embed = e.get_image_characters_embed(file_url, characters)
-            return embed
-
-
-def join_tag(tag):
-    """
-    Une las palabras del tag con un guión bajo.
-    """
-    words = tag.split()
-    tag = '_'.join(words)
-    return tag
+        characters = json_data['tag_string_character']
+        return file_url + '\n' + format_characters(characters)
 
 
 def format_characters(characters):
     """
-    Le da el formato(*) al string obtenido de la API de Danbooru que contiene
-    a los personajes del archivo.
+    Le da formato(*) al string obtenido de la API de Danbooru que contiene a los
+    personajes del archivo.
     (*)Formato: 'name_1 name_2' -> 'Name 1, Name 2'.
     """
     characters = characters.split()
