@@ -6,7 +6,8 @@ import embed as e
 
 def get_random_danbooru_file():
     """
-    Retorna la URL de un archivo aleatorio del board Danbooru.
+    Retorna la URL de un archivo aleatorio de Danbooru con la lista de
+    personajes que aparecen en él.
     """
     url = 'https://danbooru.donmai.us/posts/random.json?tags=-rating:safe'
     response = requests.get(url)
@@ -23,10 +24,11 @@ def get_random_danbooru_file():
         # ya que la extension de esa URL es webm.
         file_extension = json_data['file_ext']
         key = 'large_file_url' if file_extension == 'zip' else 'file_url'
-        file_url = json_data[key]
 
-        characters = json_data['tag_string_character']
-        return file_url + '\n' + format_characters(characters)
+        file_url = json_data[key]
+        post_url = f'https://danbooru.donmai.us/posts/{file_id}'
+        characters = format_characters(json_data['tag_string_character'])
+        return e.get_image_characters_embed(post_url, file_url, characters)
 
 
 def format_characters(characters):

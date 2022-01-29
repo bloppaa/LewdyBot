@@ -18,11 +18,15 @@ def get_help_embed():
     return help_embed
 
 
-def get_image_characters_embed(file_url, characters):
+def get_image_characters_embed(post_url, file_url, characters):
     """
-    Retorna un embed con la imagen y el/los personajes que aparecen en ella.
+    Retorna un embed con la imagen, el link al post original y el/los personajes
+    que aparecen en ella.
     """
-    db_embed = discord.Embed(colour=0xcd7f32)
+    db_embed = discord.Embed(
+        colour=0xcd7f32,
+        description=f'[Post original]({post_url})',
+        )
     db_embed.set_image(url=file_url)
     db_embed.set_footer(text=characters)
     
