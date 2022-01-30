@@ -9,11 +9,11 @@ def get_help_embed():
         title='Lista de comandos',
         colour=0xab77a3,
         description=(
-            '`$danbooru [tag]` / `$db [tag]`\nMuestra una imagen o video de '
+            '`$danbooru [tag]` | `$db [tag]`\nMuestra una imagen o video de '
             '[Danbooru](https://danbooru.donmai.us/).'
             ),
     )
-    help_embed.set_footer(text='Sintaxis: <requerido> | [opcional]')
+    help_embed.set_footer(text='Sintaxis: <requerido> [opcional]')
     return help_embed
 
 

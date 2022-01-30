@@ -45,9 +45,11 @@ async def on_message(message):
             await message.channel.send(embed=embed_msg)
         
         elif action == 'danbooru' or action == 'db':
-            url = b.get_random_danbooru_file()
-            if isinstance(url, discord.Embed):
-                await message.channel.send(embed=url)
+            file = b.get_random_danbooru_file()
+            if isinstance(file, discord.Embed):
+                await message.channel.send(embed=file)
+            else:
+                await message.channel.send(file)
 
         elif action == 'safe' or action == 's':
             image = b.get_random_image_danbooru(args, False)

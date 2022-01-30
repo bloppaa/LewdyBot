@@ -6,29 +6,36 @@ import embed as e
 
 def get_random_danbooru_file():
     """
-    Retorna la URL de un archivo aleatorio de Danbooru con la lista de
-    personajes que aparecen en él.
+    Retorna un archivo NSFW aleatorio de Danbooru con la lista de personajes
+    que aparecen en él.
     """
     url = 'https://danbooru.donmai.us/posts/random.json?tags=-rating:safe'
     response = requests.get(url)
     json_data = json.loads(response.text)
 
+    file_id = json_data.get('id')
     # Si no se puede obtener el id del archivo, significa que no es visible.
     # En este caso, recurriremos a la recursion.
-    file_id = json_data.get('id')
-
     if not file_id:
         return get_random_danbooru_file()
     else:
-        # Si la extension del archivo es zip, la llave sera 'large_file_url',
-        # ya que la extension de esa URL es webm.
-        file_extension = json_data['file_ext']
-        key = 'large_file_url' if file_extension == 'zip' else 'file_url'
+        # Si la extension del archivo es zip, entonces la llave sera
+        # 'large_file_url'; de esta manera se obtendra un archivo webm.
+        file_ext = json_data['file_ext']
+        key = 'large_file_url' if file_ext == 'zip' else 'file_url'
 
         file_url = json_data[key]
         post_url = f'https://danbooru.donmai.us/posts/{file_id}'
         characters = format_characters(json_data['tag_string_character'])
-        return e.get_image_characters_embed(post_url, file_url, characters)
+
+        # Si el archivo es una imagen retorna una instancia de Embed.
+        # Si el archivo es un video retorna un string con la informacion.
+        if file_ext == 'zip' or file_ext == 'mp4' or file_ext == 'webm':
+            info = (f'**Personajes**: {characters}\n'
+                    f'**Video**: {file_url}')
+            return info
+        else:
+            return e.get_image_characters_embed(post_url, file_url, characters)
 
 
 def format_characters(characters):
