@@ -1,7 +1,7 @@
 import discord
 import os
 
-import board as b
+import booru as b
 import embed as e
 from keep_alive import keep_alive
 

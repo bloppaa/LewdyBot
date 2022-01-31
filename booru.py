@@ -4,20 +4,21 @@ import json
 import embed as e
 
 
-def __get_random_danbooru_file():
+def __get_random_danbooru_post():
     """
-    Retorna un archivo NSFW aleatorio de Danbooru con la lista de personajes que
-    aparecen en él.
+    Retorna una publicacion NSFW aleatoria de Danbooru con la lista de
+    personajes que aparecen en ella.
     """
-    url = 'https://danbooru.donmai.us/posts/random.json?tags=order:rank+-rating:safe'
+    url = ('https://danbooru.donmai.us/posts/random.json'
+           '?tags=order:rank+-rating:safe+-status:deleted')
     response = requests.get(url)
     json_data = json.loads(response.text)
 
     file_id = json_data.get('id')
-    # Si no se puede obtener el id del archivo, significa que no es visible.
+    # Si no se puede obtener el id de la publicacion, significa que no es visible.
     # En este caso, recurriremos a la recursion.
     if not file_id:
-        return __get_random_danbooru_file()
+        return __get_random_danbooru_post()
     else:
         # Si la extension del archivo es zip, entonces la llave sera
         # 'large_file_url'; de esta manera se obtendra un archivo webm.
@@ -41,12 +42,12 @@ def __get_random_danbooru_file():
 
 def get_random_danbooru_file_by_tag(tag=None):
     """
-    Retorna un archivo aleatorio de Danbooru con la lista de personajes que 
-    aparecen en él. Si se provee un tag, busca un archivo que contenga ese tag.
-    Si se omite, llama a _get_random_danbooru_file().
+    Retorna una publicacion aleatoria de Danbooru con la lista de personajes que
+    aparecen en él. Si se provee un tag, busca una publicacion que contenga ese
+    tag. Si se omite, llama a _get_random_danbooru_post().
     """
     if not tag:
-        return __get_random_danbooru_file()
+        return __get_random_danbooru_post()
     else:
         tag = '_'.join(tag.split())
         
@@ -54,14 +55,21 @@ def get_random_danbooru_file_by_tag(tag=None):
     response = requests.get(url)
     json_data = json.loads(response.text)
 
-    # Verifica que se haya pasado un tag valido.
+    # Si la lista esta vacia, significa que el tag no existe.
+    if not json_data:
+        msg = '_**No existe ese tag**.'
+        tag = __get_fuzzy_name_match_danbooru(tag)
+        if tag:
+            msg += f' ¿Quizá quisiste decir_ `{tag}`_?'
+        return msg + '_'
+
+    # Atrapa cualquier error que pueda surgir.
     try:
         success = json_data.get('success')
     except AttributeError:
-        success = True
-
+        success = None
     if success == False:
-        return '**Sin resultados**. Intenta buscando otra cosa.'
+        return '_Usa_ `$gb` _para buscar más de 1 tag._'
     
     found = False  # Flag para verificar que encontro un post.
     for i in range(len(json_data)):
@@ -77,7 +85,7 @@ def get_random_danbooru_file_by_tag(tag=None):
 
             file_url = json_data[i][key]
             post_url = f'https://danbooru.donmai.us/posts/{file_id}'
-            characters = format_characters(json_data[i]['tag_string_character'])  
+            characters = format_characters(json_data[i]['tag_string_character'])
 
             if file_ext == 'zip' or file_ext == 'mp4' or file_ext == 'webm':
                 info = (f'**Post original**: <{post_url}>\n'
@@ -89,13 +97,27 @@ def get_random_danbooru_file_by_tag(tag=None):
 
     # Si no encontro ninguna imagen, se muestre un mensaje explicando el error.
     if not found:
-        return '**Sin resultados**. Intenta buscando otra cosa.'
+        return '_**Sin resultados**. Intenta buscando otra cosa._'
+
+
+def __get_fuzzy_name_match_danbooru(tag):
+    '''
+    Obtiene el tag parecido al tag original con más posts.
+    '''
+    url = ('https://danbooru.donmai.us/tags.json?search[order]=count'
+           f'&search[fuzzy_name_matches]={tag}')
+    response = requests.get(url)
+    json_data = json.loads(response.text)
+
+    if json_data:
+        return json_data[0]['name']
+    else:
+        return None
 
 
 def format_characters(characters):
     """
-    Le da formato(*) al string obtenido de la API de Danbooru que contiene a los
-    personajes del archivo.
+    Le da formato(*) al string que contiene a los personajes del archivo.
     (*)Formato: 'name_1 name_2' -> 'Name 1, Name 2'.
     """
     characters = characters.split()
