@@ -6,10 +6,10 @@ import embed as e
 
 def __get_random_danbooru_file():
     """
-    Retorna un archivo NSFW aleatorio de Danbooru con la lista de personajes
-    que aparecen en él.
+    Retorna un archivo NSFW aleatorio de Danbooru con la lista de personajes que
+    aparecen en él.
     """
-    url = 'https://danbooru.donmai.us/posts/random.json?tags=-rating:safe'
+    url = 'https://danbooru.donmai.us/posts/random.json?tags=order:rank+-rating:safe'
     response = requests.get(url)
     json_data = json.loads(response.text)
 
@@ -41,9 +41,9 @@ def __get_random_danbooru_file():
 
 def get_random_danbooru_file_by_tag(tag=None):
     """
-    Retorna un archivo NSFW aleatorio de Danbooru con la lista de personajes
-    que aparecen en él. Si se provee un tag, busca un archivo que contenga ese
-    tag. Si se omite, llama a _get_random_danbooru_file().
+    Retorna un archivo aleatorio de Danbooru con la lista de personajes que 
+    aparecen en él. Si se provee un tag, busca un archivo que contenga ese tag.
+    Si se omite, llama a _get_random_danbooru_file().
     """
     if not tag:
         return __get_random_danbooru_file()
