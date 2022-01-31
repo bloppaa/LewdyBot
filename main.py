@@ -45,7 +45,7 @@ async def on_message(message):
             await message.channel.send(embed=embed_msg)
         
         elif action == 'danbooru' or action == 'db':
-            file = b.get_random_danbooru_file()
+            file = b.get_random_danbooru_file_by_tag(args)
             if isinstance(file, discord.Embed):
                 await message.channel.send(embed=file)
             else:
