@@ -34,11 +34,10 @@ async def on_message(message):
 
         # Busca los argumentos del comando. 
         # Si no hay entonces tendrán el valor None.
-        args = None
         try:
             args = words[1]
         except IndexError:
-            pass
+            args = None
 
         if action == 'help' or action == 'h':
             embed_msg = e.get_help_embed()
@@ -50,13 +49,7 @@ async def on_message(message):
                 await message.channel.send(embed=file)
             else:
                 await message.channel.send(file)
-
-        elif action == 'safe' or action == 's':
-            image = b.get_random_image_danbooru(args, False)
-            if isinstance(image, discord.Embed):
-                await message.channel.send(embed=image)
-            else:
-                await message.channel.send(image)
+                
 
 keep_alive()
 client.run(os.getenv('TOKEN'))
