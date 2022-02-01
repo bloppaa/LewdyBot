@@ -40,18 +40,19 @@ async def on_message(message):
             args = None
 
         if action == 'help' or action == 'h':
-            if args:
-                if args == 'danbooru' or args == 'db':
-                    embed_msg = e.get_help_danbooru_embed()
-                    await message.channel.send(embed=embed_msg)
-            # Embed de help general.
+            # Embed help del comando danbooru,
+            if args == 'danbooru' or args == 'db':
+                embed_msg = e.get_help_danbooru_embed()
+                await message.channel.send(embed=embed_msg)
+            # Embed help general.
             else:
                 embed_msg = e.get_help_embed()
                 await message.channel.send(embed=embed_msg)
         
         elif action == 'danbooru' or action == 'db':
-            # Verifica que se haya pasado un argumento adicional.
-            nsfw = None
+            nsfw = None   # Si no especifica el modo, por defecto sera aleatorio.
+            valid = True  # Flag para verificar que se pase un modo valido.
+            
             if args:
                 args = args.split('/')
                 if len(args) > 1:
@@ -61,13 +62,16 @@ async def on_message(message):
                     elif mode == 'nsfw' or mode == 'n':
                         nsfw = True
                     else:
+                        valid = False
                         await message.channel.send('_Modo inválido._')
 
-            file = b.get_rand_danbooru_file_by_tag(nsfw, args[0] if args else None)
-            if isinstance(file, discord.Embed):
-                await message.channel.send(embed=file)
-            else:
-                await message.channel.send(file)
+            if valid:
+                file = b.get_rand_danbooru_file_by_tag(nsfw, 
+                                                       args[0] if args else None)
+                if isinstance(file, discord.Embed):
+                    await message.channel.send(embed=file)
+                else:
+                    await message.channel.send(file)
                 
 keep_alive()
 client.run(os.getenv('TOKEN'))

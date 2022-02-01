@@ -81,8 +81,7 @@ def get_rand_danbooru_file_by_tag(nsfw, tag=None):
         success = None
     if success == False:
         print(json_data['message'])
-        error_msg = ('_No se pueden buscar múltiples tags con _`$db`_.'
-                     ' Intenta usando _`$gb`.')
+        error_msg = '_No se pueden buscar múltiples tags._'
         return error_msg
     
     found = False  # Flag para verificar que encontro un post.
@@ -109,7 +108,7 @@ def get_rand_danbooru_file_by_tag(nsfw, tag=None):
             else:
                 return e.get_image_characters_embed(post_url, file_url, characters)
 
-    # Si no encontro ninguna imagen, se muestre un mensaje explicando el error.
+    # Si no encontro ninguna imagen, se muestra el error.
     if not found:
         return '_**Sin resultados**. Intenta buscando otra cosa._'
 
