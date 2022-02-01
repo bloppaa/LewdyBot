@@ -31,8 +31,8 @@ def get_help_danbooru_embed():
         description=(
             'Muestra una imagen o video de [Danbooru](https://danbooru.donmai.us/).'
             '\nUsa `/safe` o `/nsfw` para filtrar el contenido.'
-            '\n\n**Uso**\n`!danbooru [tag][/modo]`'
-            '\n\n**Alias comando**\n`!db`'
+            '\n\n**Uso**\n`$danbooru [tag][/modo]`'
+            '\n\n**Alias comando**\n`$db`'
             '\n\n**Alias modos**\n`/s`\n`/n`'
         ),
     )
