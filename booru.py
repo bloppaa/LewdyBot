@@ -108,7 +108,7 @@ def get_rand_danbooru_file_by_tag(nsfw, tag=None):
             else:
                 return e.get_image_characters_embed(post_url, file_url, characters)
 
-    # Si no encontro ninguna imagen, se muestra el error.
+    # Si no encontro ninguna imagen, se muestre un mensaje explicando el error.
     if not found:
         return '_**Sin resultados**. Intenta buscando otra cosa._'
 

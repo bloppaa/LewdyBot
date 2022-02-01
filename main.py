@@ -40,20 +40,20 @@ async def on_message(message):
             args = None
 
         if action == 'help' or action == 'h':
-            # Embed help del comando danbooru,
-            if args == 'danbooru' or args == 'db':
-                embed_msg = e.get_help_danbooru_embed()
-                await message.channel.send(embed=embed_msg)
-            # Embed help general.
+            if args:
+                if args == 'danbooru' or args == 'db':
+                    embed_msg = e.get_help_danbooru_embed()
+                    await message.channel.send(embed=embed_msg)
+            # Embed de help general.
             else:
                 embed_msg = e.get_help_embed()
                 await message.channel.send(embed=embed_msg)
         
         elif action == 'danbooru' or action == 'db':
-            nsfw = None   # Si no especifica el modo, por defecto sera aleatorio.
-            valid = True  # Flag para verificar que se pase un modo valido.
-            
+            # Verifica que se haya pasado un tag.
+            nsfw = None
             if args:
+                # Busca si se especifico un modo de busqueda.
                 args = args.split('/')
                 if len(args) > 1:
                     mode = args[1]
@@ -62,16 +62,14 @@ async def on_message(message):
                     elif mode == 'nsfw' or mode == 'n':
                         nsfw = True
                     else:
-                        valid = False
-                        await message.channel.send('_Modo inválido._')
+                        error_msg = '_Modo inválido. Usa_ `/s` _o_ `/n`.'
+                        await message.channel.send(error_msg)
 
-            if valid:
-                file = b.get_rand_danbooru_file_by_tag(nsfw, 
-                                                       args[0] if args else None)
-                if isinstance(file, discord.Embed):
-                    await message.channel.send(embed=file)
-                else:
-                    await message.channel.send(file)
+            file = b.get_rand_danbooru_file_by_tag(nsfw, args[0] if args else None)
+            if isinstance(file, discord.Embed):
+                await message.channel.send(embed=file)
+            else:
+                await message.channel.send(file)
                 
 keep_alive()
 client.run(os.getenv('TOKEN'))
