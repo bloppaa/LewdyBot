@@ -9,11 +9,36 @@ def get_help_embed():
         title='Lista de comandos',
         colour=0xab77a3,
         description=(
-            '`$danbooru [tag]` / `$db [tag]`\nMuestra una imagen o video de '
+            'Detalle del comando: `$help <comando>`\n\n'
+            '`$danbooru` : Muestra una imagen o video de '
             '[Danbooru](https://danbooru.donmai.us/).'
             ),
     )
-    help_embed.set_footer(text='Sintaxis: <requerido> [opcional]')
+    help_embed.set_footer(
+        icon_url = ('https://cdn.discordapp.com/avatars/'
+                    '874886185175097366/217166ec269838379e62ea3131cfadd0.webp'
+                    '?size=128'),
+        text='© Blopa',)
+    return help_embed
+
+
+def get_help_danbooru_embed():
+    """
+    """
+    help_embed = discord.Embed(
+        title='Comando gelbooru',
+        colour=0xab77a3,
+        description=(
+            'Muestra una imagen o video de [Danbooru](https://danbooru.donmai.us/).'
+            '\nUsa `/safe` o `/nsfw` para filtrar el contenido.'
+            '\n\n**Uso**\n`!danbooru [tag][/modo]`'
+            '\n\n**Alias comando**\n`!db`'
+            '\n\n**Alias modos**\n`/s`\n`/n`'
+        ),
+    )
+    help_embed.set_footer(
+        text='Sintaxis <requerido> [opcional]',
+    )
     return help_embed
 
 

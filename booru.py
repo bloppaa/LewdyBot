@@ -4,13 +4,18 @@ import json
 import embed as e
 
 
-def __get_random_danbooru_post():
+def __get_random_danbooru_post(nsfw):
     """
-    Retorna una publicacion NSFW aleatoria de Danbooru con la lista de
+    Retorna una publicacion aleatoria de Danbooru con la lista de
     personajes que aparecen en ella.
     """
-    url = ('https://danbooru.donmai.us/posts/random.json'
-           '?tags=order:rank+-rating:safe+-status:deleted')
+    url = ('https://danbooru.donmai.us/posts/random.json?tags=order:rank'
+           '+-status:deleted')
+    if nsfw:
+        url += '+-rating:safe'
+    elif nsfw == False:
+        url += '+rating:safe'
+        
     response = requests.get(url)
     json_data = json.loads(response.text)
 
@@ -18,7 +23,7 @@ def __get_random_danbooru_post():
     # Si no se puede obtener el id de la publicacion, significa que no es visible.
     # En este caso, recurriremos a la recursion.
     if not file_id:
-        return __get_random_danbooru_post()
+        return __get_random_danbooru_post(nsfw)
     else:
         # Si la extension del archivo es zip, entonces la llave sera
         # 'large_file_url'; de esta manera se obtendra un archivo webm.
@@ -40,18 +45,24 @@ def __get_random_danbooru_post():
             return e.get_image_characters_embed(post_url, file_url, characters)
 
 
-def get_random_danbooru_file_by_tag(tag=None):
+def get_rand_danbooru_file_by_tag(nsfw, tag=None):
     """
     Retorna una publicacion aleatoria de Danbooru con la lista de personajes que
     aparecen en él. Si se provee un tag, busca una publicacion que contenga ese
     tag. Si se omite, llama a _get_random_danbooru_post().
     """
     if not tag:
-        return __get_random_danbooru_post()
+        return __get_random_danbooru_post(nsfw)
     else:
         tag = '_'.join(tag.split())
         
-    url = f'https://danbooru.donmai.us/posts.json?tags=order:random+limit:3+{tag}'
+    url = ('https://danbooru.donmai.us/posts.json?tags=order:random+limit:3'
+           f'+-status:deleted+{tag}')
+    if nsfw:
+        url += '+-rating:safe'
+    elif nsfw == False:
+        url += '+rating:safe'
+
     response = requests.get(url)
     json_data = json.loads(response.text)
 
@@ -69,7 +80,10 @@ def get_random_danbooru_file_by_tag(tag=None):
     except AttributeError:
         success = None
     if success == False:
-        return '_Usa_ `$gb` _para buscar más de 1 tag._'
+        print(json_data['message'])
+        error_msg = ('_No se pueden buscar múltiples tags con _`$db`_.'
+                     ' Intenta usando _`$gb`.')
+        return error_msg
     
     found = False  # Flag para verificar que encontro un post.
     for i in range(len(json_data)):

@@ -34,22 +34,40 @@ async def on_message(message):
 
         # Busca los argumentos del comando. 
         # Si no hay entonces tendrán el valor None.
-        try:
+        if len(words) > 1:
             args = words[1]
-        except IndexError:
+        else:
             args = None
 
         if action == 'help' or action == 'h':
-            embed_msg = e.get_help_embed()
-            await message.channel.send(embed=embed_msg)
+            if args:
+                if args == 'danbooru' or args == 'db':
+                    embed_msg = e.get_help_danbooru_embed()
+                    await message.channel.send(embed=embed_msg)
+            # Embed de help general.
+            else:
+                embed_msg = e.get_help_embed()
+                await message.channel.send(embed=embed_msg)
         
         elif action == 'danbooru' or action == 'db':
-            file = b.get_random_danbooru_file_by_tag(args)
+            # Verifica que se haya pasado un argumento adicional.
+            nsfw = None
+            if args:
+                args = args.split('/')
+                if len(args) > 1:
+                    mode = args[1]
+                    if mode == 'safe' or mode == 's':
+                        nsfw = False
+                    elif mode == 'nsfw' or mode == 'n':
+                        nsfw = True
+                    else:
+                        await message.channel.send('_Modo inválido._')
+
+            file = b.get_rand_danbooru_file_by_tag(nsfw, args[0] if args else None)
             if isinstance(file, discord.Embed):
                 await message.channel.send(embed=file)
             else:
                 await message.channel.send(file)
                 
-
 keep_alive()
 client.run(os.getenv('TOKEN'))
